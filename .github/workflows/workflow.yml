@@ -1,14 +1,13 @@
-name: "hlint-run"
-on:
-  pull_request:
-  push:
-    branches:
-      - master
-      - 'releases/*'
+name: CI
 
-defaults:
-  run:
-    working-directory: "hlint-run"
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+permissions: {}
 
 jobs:
   unit-tests:
@@ -19,22 +18,19 @@ jobs:
       with:
         node-version: "16"
         cache: "yarn"
-        cache-dependency-path: hlint-run/yarn.lock
+        cache-dependency-path: ./yarn.lock
     - run: yarn
     - run: yarn compile
     - run: yarn package
     - run: yarn test
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up HLint
-      uses: ./hlint-setup
-
-    - run: hlint --version
-
-    - uses: ./hlint-run
-      with:
-        path: ./hlint-run/test/Example.hs
+  #test:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #  - uses: actions/checkout@v4
+  #  - name: Set up HLint
+  #    uses: ./hlint-setup
+  #  - run: hlint --version
+  #  - uses: ./hlint-run
+  #    with:
+  #      path: ./hlint-run/test/Example.hs
