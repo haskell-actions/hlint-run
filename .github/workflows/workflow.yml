@@ -23,14 +23,9 @@ jobs:
     - run: yarn compile
     - run: yarn package
     - run: yarn test
-
-  #test:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #  - uses: actions/checkout@v4
-  #  - name: Set up HLint
-  #    uses: ./hlint-setup
-  #  - run: hlint --version
-  #  - uses: ./hlint-run
-  #    with:
-  #      path: ./hlint-run/test/Example.hs
+    - name: Set up HLint
+      uses: haskell-actions/hlint-setup@479607c42f1ab77f0a58ad02f981f5ebd7928415 # v2.4.8
+    - run: hlint --version
+    - uses: ./
+      with:
+        path: ./test/Example.hs
