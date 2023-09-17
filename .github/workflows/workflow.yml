@@ -24,7 +24,7 @@ jobs:
     - run: yarn package
     - run: yarn test
     - name: Set up HLint
-      uses: haskell-actions/hlint-setup
+      uses: haskell-actions/hlint-setup@v2
     - run: hlint --version
     - uses: ./
       with:
