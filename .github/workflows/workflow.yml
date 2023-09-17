@@ -28,4 +28,4 @@ jobs:
     - run: hlint --version
     - uses: ./
       with:
-        path: ./hlint-run/test/Example.hs
+        path: ./test/Example.hs
