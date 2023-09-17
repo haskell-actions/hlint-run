@@ -1,4 +1,4 @@
-name: 'Run HLint'
+name: 'Run HLint after installing it'
 description: 'Run hlint and format the output for a problem matcher'
 inputs:
   hlint-bin:
