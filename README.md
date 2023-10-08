@@ -2,7 +2,7 @@
 
 GitHub Action: Run hlint
 
-See also [haskell/actions/hlint-setup](https://github.com/haskell/actions/tree/main/hlint-setup), which will install (and cache) HLint.
+See also [haskell-actions/hlint-setup](https://github.com/haskell-actions/hlint-setup), which will install (and cache) HLint.
 
 Executes `hlint` and presents the output using
 [actions/toolkit/commands/problem matcher](https://github.com/actions/toolkit/blob/1cc56db0ff126f4d65aeb83798852e02a2c180c3/docs/commands.md#problem-matchers),
@@ -43,12 +43,12 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: 'Set up HLint'
-      uses: haskell/actions/hlint-setup@v2
+      uses: haskell-actions/hlint-setup@v2
       with:
         version: '3.1.6'
 
     - name: 'Run HLint'
-      uses: haskell/actions/hlint-run@v2
+      uses: haskell-actions/hlint-run@v2
       with:
         path: src/
         fail-on: warning
