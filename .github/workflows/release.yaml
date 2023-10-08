@@ -13,9 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')  # only run on "releases" (pushes to tags)
     steps:
-    - uses: actions/checkout@v4
-    - run: git show HEAD --format='%s%n%n%b' -s > .release_body
-    - uses: softprops/action-gh-release@v1
+    - name: Checkout code
+      uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      with:
+        persist-credentials: false
+
+    - name: Collect release notes
+      run: git show HEAD --format='%s%n%n%b' -s > .release_body
+
+    - name: Generate release notes
+      uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v1
       with:
         generate_release_notes: true
         body_path: .release_body

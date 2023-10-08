@@ -13,19 +13,29 @@ jobs:
   unit-tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v3
+    - name: Checkout code
+      uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       with:
-        node-version: "16"
-        cache: "yarn"
+        persist-credentials: false
+
+    - name: Setup node
+      uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3.8.1
+      with:
+        node-version: 16
+        cache: yarn
         cache-dependency-path: ./yarn.lock
+
     - run: yarn
     - run: yarn compile
     - run: yarn package
     - run: yarn test
+
     - name: Set up HLint
       uses: haskell-actions/hlint-setup@v2
+
     - run: hlint --version
-    - uses: ./
+
+    - name: Self test
+      uses: ./
       with:
         path: ./test/Example.hs
