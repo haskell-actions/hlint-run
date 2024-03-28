@@ -12,6 +12,9 @@ inputs:
     description: 'Path or JSON array of paths to check with hlint'
     required: false
     default: '.'
+  json-file:
+    description: 'Existing hlint JSON output file to use instead of running hlint'
+    required: false
 outputs:
   ideas:
     description: 'A JSON array of HLint output ideas (errors, warnings, suggestions, and so on)'

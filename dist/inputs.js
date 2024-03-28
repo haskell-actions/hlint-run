@@ -52,12 +52,14 @@ function parseCheckMode(arg) {
 const INPUT_KEY_HLINT_BIN = 'hlint-bin';
 const INPUT_KEY_HLINT_FILES = 'path';
 const INPUT_KEY_HLINT_FAIL_MODE = 'fail-on';
+const INPUT_KEY_JSON_FILE = 'json-file';
 function getInputs() {
     const hlintCmd = core.getInput(INPUT_KEY_HLINT_BIN, { required: false }) || 'hlint';
     const pathList = parseStringOrJsonArray(core.getInput(INPUT_KEY_HLINT_FILES, { required: false }) || '.');
     const failOn = parseCheckMode(core.getInput(INPUT_KEY_HLINT_FAIL_MODE, { required: false }) || 'NEVER');
+    const jsonFile = core.getInput(INPUT_KEY_JSON_FILE, { required: false });
     // NOTE: Because ncc compiles all the files, take care that __dirname represents the dist/ folder.
     const baseDir = path.join(__dirname, '..');
-    return { baseDir, hlintCmd, pathList, failOn };
+    return { baseDir, hlintCmd, jsonFile, pathList, failOn };
 }
 exports.default = getInputs;

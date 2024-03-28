@@ -28,6 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
 const hlint_1 = require("./hlint");
 const bufferedExec_1 = __importDefault(require("./util/bufferedExec"));
 const withMatcherAtPath_1 = __importDefault(require("./util/withMatcherAtPath"));
@@ -41,10 +42,30 @@ async function runHLint(cmd, args) {
     ideas.map(hlint_1.serializeProblem).forEach(line => console.log(line));
     return { ideas, statusCode };
 }
+async function readHLintFile(path) {
+    const fileContents = await fs.promises.readFile(path, 'utf8');
+    const hints = JSON.parse(fileContents) || [];
+    hints.forEach(hint => {
+        const fromTo = hint.to
+            ? [`(Found: ${hint.from})`, `(Perhaps: ${hint.to})`]
+            : [`(Remove: ${hint.from})`];
+        const message = [...fromTo, ...hint.note].join('\n');
+        const properties = { ...hint, title: `${hint.severity}: ${hint.hint}` };
+        if (hint.severity == "Error") {
+            core.error(message, properties);
+        }
+        else {
+            core.warning(message, properties);
+        }
+    });
+    const ideas = hints;
+    const statusCode = ideas.length;
+    return { ideas, statusCode };
+}
 function getOverallCheckResult(failOn, { ideas, statusCode }) {
     const hintsBySev = hlint_1.SEVERITY_LEVELS.map(sev => ([sev, ideas.filter(hint => hint.severity === sev).length]));
     const hintSummary = hintsBySev
-        .filter(([_sevName, numHints]) => numHints > 0)
+        .filter(([_sevName, numHints]) => +numHints > 0)
         .map(([sev, num]) => `${sev} (${num})`).join(', ');
     let ok;
     if (failOn === 'STATUS' && statusCode !== 0) {
@@ -59,16 +80,23 @@ function getOverallCheckResult(failOn, { ideas, statusCode }) {
         // Note that the summary still shows all counts.
         const failedBySev = hintsBySev
             .slice(0, hlint_1.SEVERITY_LEVELS.indexOf(failOn) + 1)
-            .filter(([_sevName, numHints]) => numHints > 0);
+            .filter(([_sevName, numHints]) => +numHints > 0);
         ok = failedBySev.length === 0;
     }
     return { ok, hintSummary };
 }
-async function run({ baseDir, hlintCmd, pathList, failOn }) {
-    const hlintArgs = ['-j', '--json', '--', ...pathList];
-    const matcherDefPath = path.join(baseDir, hlint_1.MATCHER_DEF_PATH);
-    const { ideas, statusCode } = await (0, withMatcherAtPath_1.default)(matcherDefPath, () => runHLint(hlintCmd, hlintArgs));
-    const { ok, hintSummary } = getOverallCheckResult(failOn, { ideas, statusCode });
-    return { ok, statusCode, ideas, hintSummary };
+async function run({ baseDir, hlintCmd, jsonFile, pathList, failOn }) {
+    if (jsonFile) {
+        const { ideas, statusCode } = await readHLintFile(jsonFile);
+        const { ok, hintSummary } = getOverallCheckResult(failOn, { ideas, statusCode });
+        return { ok, statusCode, ideas, hintSummary };
+    }
+    else {
+        const hlintArgs = ['-j', '--json', '--', ...pathList];
+        const matcherDefPath = path.join(baseDir, hlint_1.MATCHER_DEF_PATH);
+        const { ideas, statusCode } = await (0, withMatcherAtPath_1.default)(matcherDefPath, () => runHLint(hlintCmd, hlintArgs));
+        const { ok, hintSummary } = getOverallCheckResult(failOn, { ideas, statusCode });
+        return { ok, statusCode, ideas, hintSummary };
+    }
 }
 exports.default = run;
