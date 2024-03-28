@@ -18,6 +18,9 @@ so hints are displayed as GitHub annotations.
   * `- path: '["src/", "test/"]'`
   * `- path: ${{ toJSON(steps.whatever.changed_dirs) }}` (see: docs on [toJSON](https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#tojson))
 * `hlint-bin` (optional): The `hlint` binary path, if not already in `PATH`.
+* `json-file` (optional): If given, the action reads JSON hint output from this
+  file instead of running `hlint` directly. Can be useful for integration with
+  alternate build systems.
 
 ## Outputs
 
