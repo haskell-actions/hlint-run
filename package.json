@@ -28,7 +28,7 @@
   "homepage": "https://github.com/haskell/actions#readme",
   "dependencies": {
     "@actions/core": "^2.0.2",
-    "@actions/tool-cache": "^3.0.0"
+    "@actions/tool-cache": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.2.3",
